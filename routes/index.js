@@ -14,12 +14,11 @@ indexRouter.post("/", function (req, res, next) {
 });
 
 indexRouter.get("/ranking", async function (req, res, next) {
-    console.log("enter getRanking")
     try {
         const query = `
         SELECT
             ROW_NUMBER() OVER ( ORDER BY COUNT(*) DESC ) AS 'rank',
-            username,
+            username AS author,
             COUNT(*) AS tds
         FROM
             markerinfo
