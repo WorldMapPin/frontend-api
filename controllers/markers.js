@@ -58,7 +58,7 @@ module.exports = {
                     whereParamsCount += 1;
                 }
             }
-            query += ` ORDER BY postValue DESC`;
+            query += ` ORDER BY postDate DESC`;            
             if (req.params.limit) {
                 query += ` LIMIT ?, ?;`;
                 queryParams.push(page);
