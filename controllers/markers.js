@@ -76,7 +76,7 @@ module.exports = {
     getMarkersFromPostLink: async (req, res, next) => {
         try {
             const postLink = req.body.post_link ? sanitizeVal(req.body.post_link) : null;
-            const query = "SELECT postDate, postLink, postImageLink, postTitle, postDescription, username, postUpvote, postValue FROM markerinfo WHERE postLink = ?";
+            const query = "SELECT postDate, postLink, postImageLink, postTitle, postDescription, username FROM markerinfo WHERE postLink = ?";
             const rows = await pool.query(query, [postLink])
             return res.json(rows);
         } catch(e) {
@@ -88,7 +88,7 @@ module.exports = {
         try {
             const marker_ids = req.body.marker_ids && req.body.marker_ids.length ? (req.body.marker_ids.map(function (a) { return pool.escape(`${a}`) }).join()) : '';
             if(marker_ids.length){
-                let queryString = "SELECT postDate, postLink, postImageLink, postTitle, postDescription, username, postUpvote, postValue FROM markerinfo WHERE id IN ("+marker_ids+")";
+                let queryString = "SELECT postDate, postLink, postImageLink, postTitle, postDescription, username FROM markerinfo WHERE id IN ("+marker_ids+")";
                 // console.log(queryString);
                 const rows = await pool.query(queryString, [])
                 return res.json(rows);
