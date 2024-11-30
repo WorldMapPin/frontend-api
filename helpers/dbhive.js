@@ -30,10 +30,10 @@ exports.getWinterChallengeData = function() {
 					WHERE
 						depth = 0
 						AND author NOT IN ('worldmappin')
-						AND created BETWEEN '2024-11-01' AND '2024-12-01'
+						AND created BETWEEN '2024-12-01' AND '2025-01-01'
 						AND ISJSON(json_metadata) = 1
 						AND (category = 'hive-163772' OR JSON_QUERY(json_metadata,'$.tags') LIKE '%hive-163772%')
-						--AND JSON_QUERY(json_metadata,'$.tags') LIKE '%winterchallenge%'
+						AND JSON_QUERY(json_metadata,'$.tags') LIKE '%winterchallenge%'
 					GROUP BY
 						author,
 						CONVERT(DATE,created)
@@ -48,27 +48,24 @@ exports.getWinterChallengeData = function() {
 					WHERE
 						depth > 0
 						AND author NOT IN ('worldmappin')
-						AND created BETWEEN '2024-11-01' AND '2024-12-01'
+						AND created BETWEEN '2024-12-01' AND '2025-01-01'
 						AND category = 'hive-124838'
 						AND parent_author = 'peak.snaps'
 						AND ISJSON(json_metadata) = 1
 						AND JSON_QUERY(json_metadata,'$.tags') LIKE '%hive-163772%'
-				--	AND JSON_QUERY(json_metadata,'$.tags') LIKE '%winterchallenge%'
+						AND JSON_QUERY(json_metadata,'$.tags') LIKE '%winterchallenge%'
+						AND JSON_QUERY(json_metadata,'$.tags') LIKE '%traveldigest%'
 					GROUP BY
 						author,
 						CONVERT(DATE,created)
 				)
 				,dataTickets AS (
 					SELECT
-						--'P',
-						--[date],
 						author,
 						(SELECT MIN(v) FROM (VALUES (posts), (2)) AS value(v)) AS [tickets]
 					FROM
 						dataPost
 					UNION SELECT
-						--'S',
-						--[date],
 						author,
 						(SELECT MIN(v) FROM (VALUES (posts), (2)) AS value(v)) AS [tickets]
 					FROM
