@@ -47,8 +47,7 @@ indexRouter.get("/rankingWinter", async function (req, res, next) {
         FROM
             markerinfo
         WHERE
-            -- TODO - Change dates
-            postDate BETWEEN '2024-11-01' AND '2024-12-01'
+            postDate BETWEEN '2024-12-01' AND '2025-01-01'
             AND isCurated = 1 AND isDigested > 0 AND postQuality > 0
         GROUP BY
             username
