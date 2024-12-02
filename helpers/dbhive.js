@@ -62,11 +62,13 @@ exports.getWinterChallengeData = function() {
 				,dataTickets AS (
 					SELECT
 						author,
+						[date],
 						(SELECT MIN(v) FROM (VALUES (posts), (2)) AS value(v)) AS [tickets]
 					FROM
 						dataPost
 					UNION SELECT
 						author,
+						[date],
 						(SELECT MIN(v) FROM (VALUES (posts), (2)) AS value(v)) AS [tickets]
 					FROM
 						dataSnap
