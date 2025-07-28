@@ -12,7 +12,7 @@ const sqlConfig = {
     "options": {"encrypt": true, "trustServerCertificate": true, "enableArithAbort":true}
 }
 
-exports.getWinterChallengeData = function() {
+exports.getDataChallenge202412 = function() {
 	return new sql.ConnectionPool(sqlConfig)
 	.connect()
 	.then(pool => {
@@ -63,13 +63,13 @@ exports.getWinterChallengeData = function() {
 					SELECT
 						author,
 						[date],
-						(SELECT MIN(v) FROM (VALUES (posts), (2)) AS value(v)) AS [tickets]
+						(SELECT MIN(v) FROM (VALUES (posts), (1)) AS value(v)) AS [tickets]
 					FROM
 						dataPost
 					UNION SELECT
 						author,
 						[date],
-						(SELECT MIN(v) FROM (VALUES (posts), (2)) AS value(v)) AS [tickets]
+						(SELECT MIN(v) FROM (VALUES (posts), (1)) AS value(v)) AS [tickets]
 					FROM
 						dataSnap
 				)
@@ -78,6 +78,114 @@ exports.getWinterChallengeData = function() {
 					SUM(tickets) AS [tickets]
 				FROM
 					dataTickets
+				GROUP BY
+					author
+		`)
+	})
+	.then(result => {
+		sql.close()
+		return result.recordsets[0]
+	})
+	.catch(error => {
+		console.log(error)
+		sql.close()
+	})
+}
+
+exports.getDataChallenge202508 = function() {
+	return new sql.ConnectionPool(sqlConfig)
+	.connect()
+	.then(pool => {
+	return pool
+		.request()
+		.query(`
+				WITH 
+				dataPost AS (
+					SELECT
+						author,
+						CONVERT(DATE,created) AS [date],
+						COUNT(*) AS posts
+					FROM
+						Comments
+					WHERE
+						depth = 0
+						AND author NOT IN ('worldmappin')
+						AND created BETWEEN '2025-08-01' AND '2025-09-01'
+						AND ISJSON(json_metadata) = 1
+						AND (category = 'hive-163772' OR JSON_QUERY(json_metadata,'$.tags') LIKE '%hive-163772%')
+						AND JSON_QUERY(json_metadata,'$.tags') LIKE '%superchallenge%'
+						AND JSON_QUERY(json_metadata,'$.tags') LIKE '%favorite%'
+					GROUP BY
+						author,
+						CONVERT(DATE,created)
+				)
+				,dataSnap AS (
+					SELECT
+						author,
+						CONVERT(DATE,created) AS [date],
+						COUNT(*) AS [posts]
+					FROM
+						Comments
+					WHERE
+						depth > 0
+						AND author NOT IN ('worldmappin')
+						AND created BETWEEN '2025-08-01' AND '2025-09-01'
+						AND category = 'hive-124838'
+						AND parent_author = 'peak.snaps'
+						AND ISJSON(json_metadata) = 1
+						AND JSON_QUERY(json_metadata,'$.tags') LIKE '%hive-163772%'
+						AND JSON_QUERY(json_metadata,'$.tags') LIKE '%superchallenge%'
+						AND JSON_QUERY(json_metadata,'$.tags') LIKE '%favorite%'
+					GROUP BY
+						author,
+						CONVERT(DATE,created)
+				)
+				,dataWave AS (
+					SELECT
+						author,
+						CONVERT(DATE,created) AS [date],
+						COUNT(*) AS [posts]
+					FROM
+						Comments
+					WHERE
+						depth > 0
+						AND author NOT IN ('worldmappin')
+						AND created BETWEEN '2025-08-01' AND '2025-09-01'
+						AND category = 'hive-125125'
+						AND parent_author = 'ecency.waves'
+						AND ISJSON(json_metadata) = 1
+						AND JSON_QUERY(json_metadata,'$.tags') LIKE '%hive-163772%'
+						AND JSON_QUERY(json_metadata,'$.tags') LIKE '%superchallenge%'
+						AND JSON_QUERY(json_metadata,'$.tags') LIKE '%favorite%'
+					GROUP BY
+						author,
+						CONVERT(DATE,created)
+				)
+				,dataPoints AS (
+					SELECT
+						author,
+						[date],
+						(SELECT MIN(v) FROM (VALUES (posts), (2)) AS value(v)) AS [Points]
+					FROM
+						dataPost
+					UNION SELECT
+						author,
+						[date],
+						(SELECT MIN(v) FROM (VALUES (posts), (1)) AS value(v)) AS [Points]
+					FROM
+						dataSnap
+					UNION SELECT
+						author,
+						[date],
+						(SELECT MIN(v) FROM (VALUES (posts), (1)) AS value(v)) AS [Points]
+					FROM
+						dataWave
+				)
+				SELECT
+					author,
+					SUM(Points) AS [Points]
+				FROM
+					dataPoints
 				GROUP BY
 					author
 		`)
