@@ -161,31 +161,31 @@ exports.getDataChallenge202508 = function() {
 						author,
 						CONVERT(DATE,created)
 				)
-				,dataPoints AS (
+				,dataTickets AS (
 					SELECT
 						author,
 						[date],
-						(SELECT MIN(v) FROM (VALUES (posts), (2)) AS value(v)) AS [Points]
+						(SELECT MIN(v) FROM (VALUES (posts), (1)) AS value(v)) AS [tickets]
 					FROM
 						dataPost
 					UNION SELECT
 						author,
 						[date],
-						(SELECT MIN(v) FROM (VALUES (posts), (1)) AS value(v)) AS [Points]
+						(SELECT MIN(v) FROM (VALUES (posts), (1)) AS value(v)) AS [tickets]
 					FROM
 						dataSnap
 					UNION SELECT
 						author,
 						[date],
-						(SELECT MIN(v) FROM (VALUES (posts), (1)) AS value(v)) AS [Points]
+						(SELECT MIN(v) FROM (VALUES (posts), (1)) AS value(v)) AS [tickets]
 					FROM
 						dataWave
 				)
 				SELECT
 					author,
-					SUM(Points) AS [Points]
+					SUM(tickets) AS [tickets]
 				FROM
-					dataPoints
+					dataTickets
 				GROUP BY
 					author
 		`)

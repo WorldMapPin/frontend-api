@@ -90,6 +90,7 @@ indexRouter.get("/ranking202508", async function (req, res, next) {
             COUNT(*) DESC
         `
         const dataWMP = await pool.query(query)
+
         const dataHiveSQL = await DBHive.getDataChallenge202508()
         const data = [...dataWMP]
         dataHiveSQL.forEach((item) => {
